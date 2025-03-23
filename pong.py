@@ -2,6 +2,7 @@
 
 import sys
 import pygame
+from constants import BLACK, WHITE
 
 
 TITLE = "Pong"
@@ -9,10 +10,6 @@ FPS = 60
 BALL_SIZE = 20
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
-
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 
 
 def main():
@@ -24,6 +21,9 @@ def main():
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption(TITLE)
 
+    # Clock
+    clock = pygame.time.Clock()
+
     # Paddle positions
     player_paddle = pygame.Rect(50, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
     computer_paddle = pygame.Rect(WINDOW_WIDTH - 50 - PADDLE_WIDTH, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
@@ -31,9 +31,6 @@ def main():
     # Ball position and velocity
     ball = pygame.Rect(WINDOW_WIDTH // 2 - BALL_SIZE // 2, WINDOW_HEIGHT // 2 - BALL_SIZE // 2, BALL_SIZE, BALL_SIZE)
     ball_velocity = [5, 5]
-
-    # Clock
-    clock = pygame.time.Clock()
 
     # Game loop
     while True:

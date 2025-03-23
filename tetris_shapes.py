@@ -1,5 +1,7 @@
+from constants import CYAN, PINK, YELLOW, GREEN, RED, BLUE
+
 # Piece colors
-COLORS = [(0, 255, 255), (128, 0, 128), (255, 255, 0), (0, 255, 0), (255, 0, 0), (255, 165, 0), (0, 0, 255)]  # I  # T  # O  # S  # Z  # L  # J
+COLORS = [CYAN, PINK, YELLOW, GREEN, RED, PINK, BLUE]  # I  # T  # O  # S  # Z  # L  # J
 
 I_SHAPE = [
     [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],

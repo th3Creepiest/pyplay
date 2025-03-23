@@ -6,6 +6,7 @@ import pygame
 
 from snake_logic import Game, Grid
 from snake_ai import SnakeAI
+from constants import BLACK, GRAY, GREEN, RED
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(filename)s - %(levelname)s - %(message)s")
 
@@ -13,13 +14,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(filename)s - %(l
 TITLE = "Snake"
 GRID_CELL_SIZE = 20
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
-DRAW_GRID = True
-
-# Colors
-BLACK = (0, 0, 0)
-GRAY = (20, 20, 20)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
+DRAW_GRID = False
 
 
 def main():
@@ -49,7 +44,7 @@ def main():
                     if event.key == pygame.K_ESCAPE:
                         quit_game()
                     elif event.key == pygame.K_a:
-                        run_ai_game(screen, clock, font, game_grid, draw_grid)
+                        run_ai_game(screen, clock, game_grid, draw_grid)
                         waiting_for_selection = False
                     elif event.key == pygame.K_h:
                         run_human_game(screen, clock, font, game_grid, draw_grid)
@@ -140,7 +135,7 @@ def run_human_game(screen: pygame.Surface, clock: pygame.time.Clock, font: pygam
         clock.tick(game.score + 10)
 
 
-def run_ai_game(screen: pygame.Surface, clock: pygame.time.Clock, font: pygame.font.Font, game_grid: Grid, draw_grid: list[pygame.Rect], fps: int = 120):
+def run_ai_game(screen: pygame.Surface, clock: pygame.time.Clock, game_grid: Grid, draw_grid: list[pygame.Rect], fps: int = 120):
     ai = SnakeAI(game_grid)
     paused = False
 

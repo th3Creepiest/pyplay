@@ -1,4 +1,4 @@
-"""Conway's Game of Life
+"""🌱 Conway's Game of Life
 
 The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, live or dead.
 Every cell interacts with its eight neighbors, which are the cells that are horizontally, vertically, or diagonally adjacent.
@@ -16,13 +16,12 @@ Each generation is a pure function of the preceding one. The rules continue to b
 
 import pygame
 import numpy as np
+from constants import BLACK, WHITE
 
 
-WIDTH, HEIGHT = 800, 600
 CELL_SIZE = 5
 FPS = 10
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 
 
 def update(grid: np.ndarray) -> np.ndarray:
@@ -58,12 +57,12 @@ def main():
     pygame.init()
     pygame.display.set_caption("Conway's Game of Life")
 
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     clock = pygame.time.Clock()
     font = pygame.font.SysFont("Arial", 20)
 
-    grid_width = WIDTH // CELL_SIZE
-    grid_height = HEIGHT // CELL_SIZE
+    grid_width = WINDOW_WIDTH // CELL_SIZE
+    grid_height = WINDOW_HEIGHT // CELL_SIZE
     grid = np.random.randint(2, size=(grid_height, grid_width))
 
     running = True
