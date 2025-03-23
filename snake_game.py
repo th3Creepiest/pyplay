@@ -18,18 +18,13 @@ DRAW_GRID = False
 
 
 def main():
-
-    pygame.init()
-
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    pygame.display.set_caption(TITLE)
-
     font = pygame.font.Font(None, 50)
-
     clock = pygame.time.Clock()
 
     game_grid = Grid(width=WINDOW_WIDTH // GRID_CELL_SIZE, height=WINDOW_HEIGHT // GRID_CELL_SIZE)
 
+    draw_grid = None
     if DRAW_GRID:
         draw_grid = [pygame.Rect(x * GRID_CELL_SIZE + 1, y * GRID_CELL_SIZE + 1, GRID_CELL_SIZE - 2, GRID_CELL_SIZE - 2) for x in range(game_grid.width) for y in range(game_grid.height)]
 
@@ -39,10 +34,11 @@ def main():
         while waiting_for_selection:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    quit_game()
+                    pygame.quit()
+                    sys.exit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        quit_game()
+                        return
                     elif event.key == pygame.K_a:
                         run_ai_game(screen, clock, game_grid, draw_grid)
                         waiting_for_selection = False
@@ -96,11 +92,6 @@ def draw_game_state(screen: pygame.Surface, game: Game, draw_grid: list[pygame.R
     pygame.display.flip()
 
 
-def quit_game():
-    pygame.quit()
-    sys.exit()
-
-
 def run_human_game(screen: pygame.Surface, clock: pygame.time.Clock, font: pygame.font.Font, game_grid: Grid, draw_grid: list[pygame.Rect]):
     game = Game(game_grid)
     paused = False
@@ -108,7 +99,8 @@ def run_human_game(screen: pygame.Surface, clock: pygame.time.Clock, font: pygam
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit_game()
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -142,7 +134,8 @@ def run_ai_game(screen: pygame.Surface, clock: pygame.time.Clock, game_grid: Gri
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit_game()
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     paused = not paused
@@ -158,4 +151,8 @@ def run_ai_game(screen: pygame.Surface, clock: pygame.time.Clock, game_grid: Gri
 
 
 if __name__ == "__main__":
+    pygame.init()
+    pygame.display.set_caption(TITLE)
     main()
+    pygame.quit()
+    sys.exit()

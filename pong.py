@@ -13,31 +13,23 @@ PADDLE_WIDTH, PADDLE_HEIGHT = 10, 100
 
 
 def main():
-
-    # Initialize Pygame
-    pygame.init()
-
-    # Screen
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    pygame.display.set_caption(TITLE)
-
-    # Clock
     clock = pygame.time.Clock()
 
-    # Paddle positions
     player_paddle = pygame.Rect(50, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
     computer_paddle = pygame.Rect(WINDOW_WIDTH - 50 - PADDLE_WIDTH, WINDOW_HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
 
-    # Ball position and velocity
     ball = pygame.Rect(WINDOW_WIDTH // 2 - BALL_SIZE // 2, WINDOW_HEIGHT // 2 - BALL_SIZE // 2, BALL_SIZE, BALL_SIZE)
     ball_velocity = [5, 5]
 
-    # Game loop
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
 
         # Player paddle movement
         keys = pygame.key.get_pressed()
@@ -84,4 +76,8 @@ def main():
 
 
 if __name__ == "__main__":
+    pygame.init()
+    pygame.display.set_caption(TITLE)
     main()
+    pygame.quit()
+    sys.exit()

@@ -14,19 +14,19 @@ The first generation is created by applying the above rules simultaneously to ev
 Each generation is a pure function of the preceding one. The rules continue to be applied repeatedly to create further generations.
 """
 
+import sys
 import pygame
 import numpy as np
 from constants import BLACK, WHITE
 
 
-CELL_SIZE = 5
+TITLE = "Conway's Game of Life"
 FPS = 10
+CELL_SIZE = 5
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 
 
 def update(grid: np.ndarray) -> np.ndarray:
-    """Update the grid for the next generation according to Conway's rules."""
-
     rows, cols = grid.shape
     new_grid = grid.copy()
 
@@ -53,10 +53,6 @@ def update(grid: np.ndarray) -> np.ndarray:
 
 
 def main():
-
-    pygame.init()
-    pygame.display.set_caption("Conway's Game of Life")
-
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     clock = pygame.time.Clock()
     font = pygame.font.SysFont("Arial", 20)
@@ -73,17 +69,17 @@ def main():
         clock.tick(FPS)
 
         for event in pygame.event.get():
-
-            # Exit the game
             if event.type == pygame.QUIT:
                 running = False
+                pygame.quit()
+                sys.exit()
 
-            # Toggle pause/resume with SPACE
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                if event.key == pygame.K_SPACE or event.key == pygame.K_p:
                     pause = not pause
 
-            # Toggle cell state with mouse click
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 j = pos[0] // CELL_SIZE
@@ -111,8 +107,10 @@ def main():
 
         pygame.display.flip()
 
-    pygame.quit()
-
 
 if __name__ == "__main__":
+    pygame.init()
+    pygame.display.set_caption(TITLE)
     main()
+    pygame.quit()
+    sys.exit()

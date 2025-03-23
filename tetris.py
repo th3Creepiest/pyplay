@@ -1,13 +1,14 @@
 """️🎮 Tetris Game"""
 
-import pygame
+import sys
 import random
+import pygame
 from tetris_shapes import SHAPES, COLORS
 from constants import BLACK, WHITE, RED, GRAY
 
 # Screen dimensions
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 700
+SCREEN_HEIGHT = 600
 PLAY_WIDTH = 300  # meaning 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600  # meaning 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
@@ -15,13 +16,6 @@ BLOCK_SIZE = 30
 # Position constants
 TOP_LEFT_X = (SCREEN_WIDTH - PLAY_WIDTH) // 2
 TOP_LEFT_Y = (SCREEN_HEIGHT - PLAY_HEIGHT) // 2
-
-# Initialize Pygame
-pygame.init()
-
-# Initialize screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Tetris")
 
 
 class Piece:
@@ -174,6 +168,7 @@ def instant_drop(piece, grid):
 def main():
     run = True
     paused = False
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     grid = create_grid()
     current_piece = new_piece()
@@ -224,10 +219,13 @@ def main():
         # Process events regardless of pause state
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                pygame.quit()
+                sys.exit()
 
             # Key press events
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run = False
                 if event.key == pygame.K_p:
                     paused = not paused
                     if paused:
@@ -288,9 +286,7 @@ def main():
                 elif event.key == pygame.K_DOWN:
                     key_down_pressed = False
 
-        # Skip game logic if paused
         if paused:
-            # Keep drawing the game state while paused
             screen.fill(BLACK)
             draw_grid(screen, grid)
             draw_piece(screen, current_piece)
@@ -368,9 +364,8 @@ def main():
         draw_piece(screen, current_piece)
         draw_next_piece(screen, next_piece)
         draw_score(screen, score, level, high_score)
-        pygame.display.update()
 
-    pygame.quit()
+        pygame.display.update()
 
 
 def show_game_over(screen: pygame.Surface):
@@ -380,4 +375,8 @@ def show_game_over(screen: pygame.Surface):
 
 
 if __name__ == "__main__":
+    pygame.init()
+    pygame.display.set_caption("Tetris")
     main()
+    pygame.quit()
+    sys.exit()
