@@ -20,6 +20,9 @@ GAMES = [
 pygame.init()
 pygame.display.set_caption("PyPlay")
 
+icon = pygame.image.load("art/icon.jpg")
+pygame.display.set_icon(icon)
+
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 font = pygame.font.SysFont("arial", FONT_SIZE)
 
