@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Game:
+    WINNING_SCORE = 3
+    GAME_OVER = False
 
     def __init__(self, width: int, height: int):
         self.game_area = GameArea(width, height)
@@ -39,6 +41,14 @@ class Game:
         self.ball.move()
         self.handle_collisions()
         self.check_goal()
+        self.check_game_over()
+
+    def reset(self):
+        self.reset_ball()
+        self.reset_paddles()
+        self.GAME_OVER = False
+        self.score_left = 0
+        self.score_right = 0
 
     def move_right_paddle_up(self):
         if self.paddleR.y - self.paddleR.VELOCITY >= 0:
@@ -69,6 +79,16 @@ class Game:
         self.ball.y = self.game_area.height // 2
         self.ball.y_velocity = 0
         self.ball.x_velocity *= -1
+
+    def reset_paddles(self):
+        self.paddleL.x = self.game_area.width * 0.05
+        self.paddleL.y = self.game_area.height // 2 - self.paddleL.height // 2
+        self.paddleR.x = self.game_area.width - self.paddleR.width - self.game_area.width * 0.05
+        self.paddleR.y = self.game_area.height // 2 - self.paddleR.height // 2
+
+    def check_game_over(self):
+        if self.score_left >= self.WINNING_SCORE or self.score_right >= self.WINNING_SCORE:
+            self.GAME_OVER = True
 
     def handle_collisions(self):
 
