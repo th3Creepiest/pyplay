@@ -3,9 +3,9 @@
 import pygame
 
 try:
-    from .game_objects import Game
+    from .logic import Game
 except ImportError:
-    from game_objects import Game
+    from logic import Game
 
 
 BLACK = (0, 0, 0)
@@ -80,7 +80,6 @@ if __name__ == "__main__":
     TITLE = "Pong"
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT = 600
-
     pygame.init()
     pygame.display.set_caption(TITLE)
     pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

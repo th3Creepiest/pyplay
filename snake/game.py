@@ -4,9 +4,13 @@ import sys
 import logging
 import pygame
 
-from snake_logic import Game, Grid
-from snake_ai import SnakeAI
-from constants import BLACK, GRAY, GREEN, RED
+try:
+    from .logic import Game, Grid
+    from .ai import SnakeAI
+except ImportError:
+    from logic import Game, Grid
+    from ai import SnakeAI
+
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(filename)s - %(levelname)s - %(message)s")
 
@@ -15,6 +19,11 @@ TITLE = "Snake"
 GRID_CELL_SIZE = 20
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 DRAW_GRID = False
+
+BLACK = (0, 0, 0)
+GRAY = (50, 50, 50)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
 
 def main():
@@ -79,7 +88,8 @@ def draw_game_state(screen: pygame.Surface, game: Game, draw_grid: list[pygame.R
     screen.fill(BLACK)
 
     if DRAW_GRID:
-        [pygame.draw.rect(screen, GRAY, rect, width=1) for rect in draw_grid]
+        for rect in draw_grid:
+            pygame.draw.rect(screen, GRAY, rect, width=1)
 
     # Draw the snake
     for segment in game.snake.positions:

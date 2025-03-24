@@ -5,7 +5,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from snake_logic import Grid, Game, Coord
+try:
+    from .logic import Grid, Game, Coord
+except ImportError:
+    from logic import Grid, Game, Coord
 
 
 class SnakeNN(nn.Module):

@@ -3,8 +3,11 @@
 import sys
 import random
 import pygame
-from tetris_shapes import SHAPES, COLORS
-from constants import BLACK, WHITE, RED, GRAY
+
+try:
+    from .shapes import SHAPES, COLORS
+except ImportError:
+    from shapes import SHAPES, COLORS
 
 # Screen dimensions
 SCREEN_WIDTH = 800
@@ -12,6 +15,12 @@ SCREEN_HEIGHT = 600
 PLAY_WIDTH = 300  # meaning 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600  # meaning 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
+
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (50, 50, 50)
+RED = (255, 0, 0)
 
 # Position constants
 TOP_LEFT_X = (SCREEN_WIDTH - PLAY_WIDTH) // 2
