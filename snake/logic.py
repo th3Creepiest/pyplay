@@ -31,14 +31,16 @@ class Snake:
         self.positions = [new_head] + self.positions[:-1]
 
     def change_direction(self, direction: str | int):
-        if direction == "up" or direction == 0:
+        if direction in ("up", 0):
             new_direction = Coord(0, -1)
-        elif direction == "down" or direction == 1:
+        elif direction in ("down", 1):
             new_direction = Coord(0, 1)
-        elif direction == "left" or direction == 2:
+        elif direction in ("left", 2):
             new_direction = Coord(-1, 0)
-        elif direction == "right" or direction == 3:
+        elif direction in ("right", 3):
             new_direction = Coord(1, 0)
+        else:
+            raise ValueError(f"Invalid direction: {direction}")
 
         opposite_dir = Coord(-self.direction[0], -self.direction[1])
 
@@ -53,6 +55,8 @@ class Game:
     """Snake Game Logic"""
 
     def __init__(self, grid: Grid = Grid(width=150, height=150)):
+        self.game_over: bool
+        self.food: Food
         self.grid = grid
         self.start_new_game()
 
@@ -83,9 +87,9 @@ class Game:
             self.snake.eat_food()
             self.food = self.spawn_food()
             self.score += 1
-            logging.info(f"Snake ate food. Score: {self.score}")
+            logging.info("Snake ate food. Score: %d", self.score)
 
         # Check for collision
         if head in self.snake.positions[1:]:
-            logging.info(f"Game Over: snake collided with itself. Score: {self.score}")
+            logging.info("Game Over: snake collided with itself. Score: %d", self.score)
             self.game_over = True

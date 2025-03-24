@@ -1,9 +1,8 @@
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-CYAN = (0, 255, 255)
-PINK = (255, 165, 0)
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from constants import RED, GREEN, BLUE, YELLOW, CYAN, PINK
 
 
 # Piece colors

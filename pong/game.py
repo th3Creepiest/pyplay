@@ -1,16 +1,16 @@
 # 🕹️ Pong Game
 
+import os
+import sys
 import pygame
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from constants import BLACK, WHITE, RED
+
 try:
-    from .logic import Game
-except ImportError:
     from logic import Game
-
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
+except ImportError:
+    from .logic import Game
 
 
 def main(fps: int = 60):

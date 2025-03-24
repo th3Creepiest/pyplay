@@ -1,8 +1,12 @@
 # 🐍 Snake Game
 
+import os
 import sys
 import logging
 import pygame
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from constants import BLACK, GRAY, RED, GREEN
 
 try:
     from .logic import Game, Grid
@@ -19,11 +23,6 @@ TITLE = "Snake"
 GRID_CELL_SIZE = 20
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 DRAW_GRID = False
-
-BLACK = (0, 0, 0)
-GRAY = (50, 50, 50)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
 
 
 def main():
@@ -48,7 +47,7 @@ def main():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         return
-                    elif event.key == pygame.K_a:
+                    if event.key == pygame.K_a:
                         run_ai_game(screen, clock, game_grid, draw_grid)
                         waiting_for_selection = False
                     elif event.key == pygame.K_h:

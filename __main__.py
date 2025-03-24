@@ -4,14 +4,11 @@ import tetris
 import pong
 import snake
 import game_of_life
+from constants import BLACK, WHITE
 
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 FONT_SIZE = 40
-
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
 
 GAMES = [
     ("Tetris", tetris.main),

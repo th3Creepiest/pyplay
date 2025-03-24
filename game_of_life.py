@@ -17,15 +17,13 @@ Each generation is a pure function of the preceding one. The rules continue to b
 import sys
 import pygame
 import numpy as np
+from constants import BLACK, WHITE
 
 
 TITLE = "Conway's Game of Life"
 FPS = 10
 CELL_SIZE = 5
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
 
 
 def update(grid: np.ndarray) -> np.ndarray:
