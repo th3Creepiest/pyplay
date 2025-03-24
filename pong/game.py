@@ -2,6 +2,7 @@
 
 import os
 import sys
+import logging
 import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -13,9 +14,51 @@ except ImportError:
     from .logic import Game
 
 
-def main(fps: int = 60):
-    clock = pygame.time.Clock()
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
+
+def main():
+    logging.info("launching pong game")
     screen = pygame.display.get_surface()
+    display_welcome_screen(screen)
+
+
+def display_welcome_screen(screen: pygame.Surface):
+    logging.info("displaying welcome screen")
+
+    title_font = pygame.font.SysFont("comicsans", 100)
+    instruction_font = pygame.font.SysFont("comicsans", 40)
+
+    waiting_for_start = True
+    while waiting_for_start:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                waiting_for_start = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    waiting_for_start = False
+                elif event.key == pygame.K_SPACE:
+                    run_game(screen)
+
+        screen.fill(BLACK)
+
+        title_text = title_font.render("PONG", True, WHITE)
+        title_rect = title_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4))
+        screen.blit(title_text, title_rect)
+
+        instructions = ["Player 1: W (up), S (down)", "Player 2: Up Arrow, Down Arrow", "Press SPACE to start"]
+        for i, text in enumerate(instructions):
+            text_surface = instruction_font.render(text, True, WHITE)
+            text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + i * 50))
+            screen.blit(text_surface, text_rect)
+
+        pygame.display.flip()
+
+
+def run_game(screen: pygame.Surface):
+    logging.info("game start")
+
+    clock = pygame.time.Clock()
     screen_width, screen_height = screen.get_size()
     game = Game(screen_width, screen_height)
     draw_offset_x = (screen_width - game.game_area.width) // 2
@@ -26,13 +69,15 @@ def main(fps: int = 60):
     score_font = pygame.font.SysFont("comicsans", 50)
     game_over_font = pygame.font.SysFont("comicsans", 75)
     running = True
+    fps = 60
 
     while running:
         clock.tick(fps)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
@@ -68,10 +113,11 @@ def main(fps: int = 60):
 
         if game.GAME_OVER:
             txt = game_over_font.render("Game Over", True, RED)
-            screen.blit(txt, (screen_width // 2 - txt.get_width() // 2, screen_height // 2 - txt.get_height() // 2))
-            pygame.display.update()
+            txt_rect = txt.get_rect(center=(screen_width // 2, screen_height // 2))
+            screen.blit(txt, txt_rect)
+            pygame.display.update(txt_rect)
             pygame.time.wait(3000)
-            game.reset()
+            running = False
 
         pygame.display.update((draw_offset_x, draw_offset_y, game.game_area.width, game.game_area.height))
 
