@@ -6,12 +6,13 @@ import random
 import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from constants import BLACK, WHITE, GRAY, RED
+from constants import BLACK, WHITE, GRAY, RED, FONT_60_CS, FONT_28_CS
 
 try:
     from .shapes import SHAPES, COLORS
 except ImportError:
     from shapes import SHAPES, COLORS
+
 
 # Screen dimensions
 SCREEN_WIDTH = 800
@@ -126,17 +127,15 @@ def clear_rows(grid, locked):
     return cleared
 
 
-def draw_text_middle(surface, text, size, color):
-    font = pygame.font.SysFont("comicsans", size, bold=True)
-    label = font.render(text, 1, color)
+def draw_text_middle(surface, text, color):
+    label = FONT_60_CS.render(text, 1, color)
     surface.blit(label, (SCREEN_WIDTH / 2 - (label.get_width() / 2), SCREEN_HEIGHT / 2 - (label.get_height() / 2)))
 
 
 def draw_score(surface, score, level, high_score=0):
-    font = pygame.font.SysFont("comicsans", 28)
-    label_score = font.render(f"Score: {score}", 1, WHITE)
-    label_level = font.render(f"Level: {level}", 1, WHITE)
-    label_high_score = font.render(f"High Score: {high_score}", 1, WHITE)
+    label_score = FONT_28_CS.render(f"Score: {score}", 1, WHITE)
+    label_level = FONT_28_CS.render(f"Level: {level}", 1, WHITE)
+    label_high_score = FONT_28_CS.render(f"High Score: {high_score}", 1, WHITE)
 
     # Position for score display - left side of the screen
     score_x = 30
@@ -241,7 +240,7 @@ def main():
                 if event.key == pygame.K_p:
                     paused = not paused
                     if paused:
-                        draw_text_middle(screen, "PAUSED", 60, WHITE)
+                        draw_text_middle(screen, "PAUSED", WHITE)
                         pygame.display.update()
                 elif event.key == pygame.K_LEFT or event.key == pygame.K_h:
                     if not paused:
@@ -284,7 +283,7 @@ def main():
 
                             if not valid_space(current_piece, grid):
                                 run = False
-                                draw_text_middle(screen, "GAME OVER!", 80, RED)
+                                draw_text_middle(screen, "GAME OVER!", RED)
                                 pygame.display.update()
                                 pygame.time.delay(1500)
 
@@ -303,7 +302,7 @@ def main():
             draw_piece(screen, current_piece)
             draw_next_piece(screen, next_piece)
             draw_score(screen, score, level, high_score)
-            draw_text_middle(screen, "PAUSED", 60, WHITE)
+            draw_text_middle(screen, "PAUSED", WHITE)
             pygame.display.update()
             continue
 
@@ -378,13 +377,12 @@ def main():
 
 
 def show_game_over(screen: pygame.Surface):
-    draw_text_middle(screen, "GAME OVER!", 80, RED)
+    draw_text_middle(screen, "GAME OVER!", RED)
     pygame.display.update()
     pygame.time.delay(1500)
 
 
 if __name__ == "__main__":
-    pygame.init()
     pygame.display.set_caption("Tetris")
     main()
     pygame.quit()

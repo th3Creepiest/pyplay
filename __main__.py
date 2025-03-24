@@ -4,11 +4,10 @@ import tetris
 import pong
 import snake
 import game_of_life
-from constants import BLACK, WHITE
+from constants import BLACK, WHITE, FONT_50, FONT_40
 
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
-FONT_SIZE = 40
 
 GAMES = [
     ("Tetris", tetris.main),
@@ -17,18 +16,16 @@ GAMES = [
     ("Game of Life", game_of_life.main),
 ]
 
-pygame.init()
 pygame.display.set_caption("PyPlay")
 
 icon = pygame.image.load("art/icon.jpg")
 pygame.display.set_icon(icon)
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-font = pygame.font.SysFont("arial", FONT_SIZE)
 
 
 def draw_text(text, x, y):
-    txt_surface = font.render(text, True, WHITE)
+    txt_surface = FONT_50.render(text, True, WHITE)
     txt_rect = txt_surface.get_rect(center=(x, y))
     screen.blit(txt_surface, txt_rect)
 
@@ -42,7 +39,7 @@ while running:
 
     for i, (name, _) in enumerate(GAMES):
         color = WHITE if i == selected else (128, 128, 128)
-        text_surface = font.render(f"{i+1}. {name}", True, color)
+        text_surface = FONT_40.render(f"{i+1}. {name}", True, color)
         text_rect = text_surface.get_rect(center=(WINDOW_WIDTH // 2, 200 + i * 50))
         screen.blit(text_surface, text_rect)
 
@@ -52,11 +49,13 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+            elif event.key == pygame.K_DOWN:
                 selected = (selected + 1) % len(GAMES)
             elif event.key == pygame.K_UP:
                 selected = (selected - 1) % len(GAMES)
-            elif event.key == pygame.K_RETURN:
+            elif event.key in [pygame.K_RETURN, pygame.K_SPACE]:
                 _, game_func = GAMES[selected]
                 game_func()
 

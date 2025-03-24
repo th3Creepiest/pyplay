@@ -17,12 +17,9 @@ Each generation is a pure function of the preceding one. The rules continue to b
 import sys
 import pygame
 import numpy as np
-from constants import BLACK, WHITE
+from constants import BLACK, WHITE, FONT_20
 
 
-TITLE = "Conway's Game of Life"
-FPS = 10
-CELL_SIZE = 5
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 
 
@@ -55,10 +52,11 @@ def update(grid: np.ndarray) -> np.ndarray:
 def main():
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     clock = pygame.time.Clock()
-    font = pygame.font.SysFont("Arial", 20)
+    cell_size = 5
+    fps = 10
 
-    grid_width = WINDOW_WIDTH // CELL_SIZE
-    grid_height = WINDOW_HEIGHT // CELL_SIZE
+    grid_width = WINDOW_WIDTH // cell_size
+    grid_height = WINDOW_HEIGHT // cell_size
     grid = np.random.randint(2, size=(grid_height, grid_width))
 
     running = True
@@ -66,7 +64,7 @@ def main():
     iteration = 0
 
     while running:
-        clock.tick(FPS)
+        clock.tick(fps)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -77,13 +75,13 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if event.key == pygame.K_SPACE or event.key == pygame.K_p:
+                elif event.key in (pygame.K_SPACE, pygame.K_p):
                     pause = not pause
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                j = pos[0] // CELL_SIZE
-                i = pos[1] // CELL_SIZE
+                j = pos[0] // cell_size
+                i = pos[1] // cell_size
                 grid[i, j] = 1 - grid[i, j]
 
         if not pause:
@@ -96,12 +94,12 @@ def main():
         for i in range(grid_height):
             for j in range(grid_width):
                 if grid[i, j] == 1:
-                    rect = pygame.Rect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                    rect = pygame.Rect(j * cell_size, i * cell_size, cell_size, cell_size)
                     pygame.draw.rect(screen, WHITE, rect)
 
         # Render labels
-        text_iteration = font.render(f"Iteration: {iteration}", True, WHITE)
-        text_alive = font.render(f"Alive: {np.sum(grid)}", True, WHITE)
+        text_iteration = FONT_20.render(f"Iteration: {iteration}", True, WHITE)
+        text_alive = FONT_20.render(f"Alive: {np.sum(grid)}", True, WHITE)
         screen.blit(text_iteration, (10, 10))
         screen.blit(text_alive, (10, 35))
 
@@ -109,8 +107,7 @@ def main():
 
 
 if __name__ == "__main__":
-    pygame.init()
-    pygame.display.set_caption(TITLE)
+    pygame.display.set_caption("Conway's Game of Life")
     main()
     pygame.quit()
     sys.exit()
