@@ -4,7 +4,7 @@ import tetris
 import pong
 import snake
 import game_of_life
-from constants import BLACK, WHITE, FONT_50, FONT_40
+from globals import BLACK, WHITE, FONT_50, FONT_40
 
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600

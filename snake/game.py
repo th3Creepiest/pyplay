@@ -6,7 +6,7 @@ import logging
 import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from constants import BLACK, GRAY, RED, GREEN, FONT_50, FONT_40
+from globals import BLACK, GRAY, RED, GREEN, FONT_50, FONT_40
 
 try:
     from .logic import Game, Grid

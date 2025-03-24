@@ -6,7 +6,7 @@ import random
 import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from constants import BLACK, WHITE, GRAY, RED, FONT_60_CS, FONT_28_CS
+from globals import BLACK, WHITE, GRAY, RED, FONT_60_CS, FONT_28_CS
 
 try:
     from .shapes import SHAPES, COLORS

@@ -17,7 +17,7 @@ Each generation is a pure function of the preceding one. The rules continue to b
 import sys
 import pygame
 import numpy as np
-from constants import BLACK, WHITE, FONT_20
+from globals import BLACK, WHITE, FONT_20
 
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
