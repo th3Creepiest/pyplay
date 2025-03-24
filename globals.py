@@ -16,6 +16,7 @@ FONT_28_CS = pygame.font.SysFont("comicsans", 28)
 
 # Colors
 BLACK = (0, 0, 0)
+GRAY = (50, 50, 50)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -23,4 +24,3 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 CYAN = (0, 255, 255)
 PINK = (255, 165, 0)
-GRAY = (50, 50, 50)

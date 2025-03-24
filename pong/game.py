@@ -36,7 +36,7 @@ def display_welcome_screen(screen: pygame.Surface):
                 if event.key == pygame.K_ESCAPE:
                     waiting_for_start = False
                 elif event.key == pygame.K_SPACE:
-                    run_game(screen)
+                    run_multiplayer_game(screen)
 
         screen.fill(BLACK)
 
@@ -53,8 +53,8 @@ def display_welcome_screen(screen: pygame.Surface):
         pygame.display.flip()
 
 
-def run_game(screen: pygame.Surface):
-    logging.info("game start")
+def run_multiplayer_game(screen: pygame.Surface):
+    logging.info("multiplayer game start")
 
     clock = pygame.time.Clock()
     screen_width, screen_height = screen.get_size()
