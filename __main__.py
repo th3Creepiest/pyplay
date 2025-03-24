@@ -28,9 +28,9 @@ font = pygame.font.SysFont("arial", FONT_SIZE)
 
 
 def draw_text(text, x, y):
-    text_surface = font.render(text, True, WHITE)
-    text_rect = text_surface.get_rect(center=(x, y))
-    screen.blit(text_surface, text_rect)
+    txt_surface = font.render(text, True, WHITE)
+    txt_rect = txt_surface.get_rect(center=(x, y))
+    screen.blit(txt_surface, txt_rect)
 
 
 selected = 0
