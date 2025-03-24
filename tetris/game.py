@@ -54,18 +54,23 @@ def new_piece():
     return Piece(SHAPES[shape_index], COLORS[shape_index])
 
 
-def create_grid(locked_positions={}):
+def create_grid(locked_positions=None):
+    if locked_positions is None:
+        locked_positions = {}
+
     grid = [[BLACK for _ in range(10)] for _ in range(20)]
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
+
+    for i, row in enumerate(grid):
+        for j, _ in enumerate(row):
             if (j, i) in locked_positions:
                 grid[i][j] = locked_positions[(j, i)]
+
     return grid
 
 
 def draw_grid(surface, grid):
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
+    for i, row in enumerate(grid):
+        for j, _ in enumerate(row):
             pygame.draw.rect(surface, grid[i][j], (TOP_LEFT_X + j * BLOCK_SIZE, TOP_LEFT_Y + i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
 
     # Draw grid lines
@@ -78,18 +83,18 @@ def draw_grid(surface, grid):
 
 def draw_piece(surface, piece):
     shape = piece.get_shape()
-    for i in range(len(shape)):
-        for j in range(len(shape[i])):
-            if shape[i][j]:
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell:
                 pygame.draw.rect(surface, piece.color, (TOP_LEFT_X + (piece.x + j) * BLOCK_SIZE, TOP_LEFT_Y + (piece.y + i) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
 
 
 def valid_space(piece, grid):
     shape = piece.get_shape()
-    for i in range(len(shape)):
-        row = shape[i]
-        for j in range(len(row)):
-            if row[j]:
+
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell:
                 x = piece.x + j
                 y = piece.y + i
                 if x < 0 or x >= 10 or y >= 20 or (y >= 0 and grid[y][x] != BLACK):
@@ -108,7 +113,7 @@ def clear_rows(grid, locked):
             for j in range(len(row)):
                 try:
                     del locked[(j, i)]
-                except:
+                except KeyError:
                     continue
 
             # Shift every row above down one
@@ -158,9 +163,9 @@ def draw_next_piece(surface, piece):
     offset_y = (preview_box_size - piece_height * BLOCK_SIZE) // 2
 
     # Draw the next piece
-    for i in range(len(shape)):
-        for j in range(len(shape[i])):
-            if shape[i][j]:
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell:
                 pygame.draw.rect(surface, piece.color, (preview_x + offset_x + j * BLOCK_SIZE, preview_y + offset_y + i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
 
 
@@ -238,14 +243,14 @@ def main():
                     if paused:
                         draw_text_middle(screen, "PAUSED", 60, WHITE)
                         pygame.display.update()
-                elif event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_h:
                     if not paused:
                         current_piece.move_left()
                         if not valid_space(current_piece, grid):
                             current_piece.move_right()
                         key_left_pressed = True
                         left_time = 0
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_l:
                     if not paused:
                         current_piece.move_right()
                         if not valid_space(current_piece, grid):
@@ -269,10 +274,9 @@ def main():
                     if not paused:
                         if instant_drop(current_piece, grid):
                             shape = current_piece.get_shape()
-                            for i in range(len(shape)):
-                                row = shape[i]
-                                for j in range(len(row)):
-                                    if row[j]:
+                            for i, row in enumerate(shape):
+                                for j, cell in enumerate(row):
+                                    if cell:
                                         locked_positions[(current_piece.x + j, current_piece.y + i)] = current_piece.color
 
                             current_piece = next_piece
@@ -286,9 +290,9 @@ def main():
 
             # Key release events
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_h:
                     key_left_pressed = False
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_l:
                     key_right_pressed = False
                 elif event.key == pygame.K_DOWN:
                     key_down_pressed = False
@@ -323,10 +327,9 @@ def main():
                 current_piece.y -= 1
                 # Handle piece landing from fast drop
                 shape = current_piece.get_shape()
-                for i in range(len(shape)):
-                    row = shape[i]
-                    for j in range(len(row)):
-                        if row[j]:
+                for i, row in enumerate(shape):
+                    for j, cell in enumerate(row):
+                        if cell:
                             locked_positions[(current_piece.x + j, current_piece.y + i)] = current_piece.color
 
                 current_piece = next_piece
@@ -343,10 +346,9 @@ def main():
             if not valid_space(current_piece, grid):
                 current_piece.y -= 1
                 shape = current_piece.get_shape()
-                for i in range(len(shape)):
-                    row = shape[i]
-                    for j in range(len(row)):
-                        if row[j]:
+                for i, row in enumerate(shape):
+                    for j, cell in enumerate(row):
+                        if cell:
                             locked_positions[(current_piece.x + j, current_piece.y + i)] = current_piece.color
 
                 current_piece = next_piece
