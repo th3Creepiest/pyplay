@@ -145,7 +145,7 @@ def draw_scores(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw
 def draw_hits(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
     left_hits_txt = FONT_30_CS.render(str(game.hits_left), True, RED)
     right_hits_txt = FONT_30_CS.render(str(game.hits_right), True, RED)
-    total_hits_txt = FONT_30_CS.render(str(game.hits_left + game.hits_right), True, RED)
+    total_hits_txt = FONT_30_CS.render(str(game.total_hits), True, RED)
 
     # Left hits at bottom middle left (1/4)
     screen.blit(left_hits_txt, (game.game_area.width // 4 - left_hits_txt.get_width() // 2 - draw_offset_x, game.game_area.height - left_hits_txt.get_height() - draw_offset_y))

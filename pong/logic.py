@@ -41,6 +41,10 @@ class Game:
 
         self._set_ball_velocity()
 
+    @property
+    def total_hits(self) -> int:
+        return self.hits_left + self.hits_right
+
     def update(self):
         self.ball.move()
         self.handle_collisions()
