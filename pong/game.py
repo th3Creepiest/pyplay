@@ -6,7 +6,7 @@ import logging
 import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import BLACK, WHITE, RED, FONT_100_CS, FONT_75_CS, FONT_50_CS, FONT_28_CS
+from globals import BLACK, WHITE, RED, FONT_100_CS, FONT_75_CS, FONT_50_CS, FONT_30_CS, FONT_28_CS
 
 try:
     from logic import Game
@@ -75,9 +75,6 @@ def run_multiplayer_game(screen: pygame.Surface):
     game = Game(screen_width, screen_height)
     draw_offset_x = (screen_width - game.game_area.width) // 2
     draw_offset_y = (screen_height - game.game_area.height) // 2
-    net_segment_height = game.game_area.height // 20
-    net_segments = 8
-    net_width = 4
     running = True
     fps = 60
 
@@ -106,20 +103,9 @@ def run_multiplayer_game(screen: pygame.Surface):
 
         screen.fill(BLACK)
 
-        # draw the scores
-        left_score_txt = FONT_50_CS.render(str(game.score_left), True, WHITE)
-        right_score_txt = FONT_50_CS.render(str(game.score_right), True, WHITE)
-        screen.blit(left_score_txt, (game.game_area.width // 4 - left_score_txt.get_width() // 2 - draw_offset_x, left_score_txt.get_height() // 2 - draw_offset_y))
-        screen.blit(right_score_txt, (game.game_area.width * (3 / 4) - right_score_txt.get_width() // 2 - draw_offset_x, right_score_txt.get_height() // 2 - draw_offset_y))
-
-        # draw the net
-        for y in range(draw_offset_y + 20, draw_offset_y + game.game_area.height, game.game_area.height // net_segments):
-            pygame.draw.rect(screen, WHITE, ((draw_offset_x - net_width // 2) + game.game_area.width // 2, y, net_width, net_segment_height))
-
-        pygame.draw.rect(screen, WHITE, (draw_offset_x, draw_offset_y, game.game_area.width, game.game_area.height), width=1)
-        pygame.draw.rect(screen, WHITE, (game.paddleR.x + draw_offset_x, game.paddleR.y + draw_offset_y, game.paddleR.width, game.paddleR.height))
-        pygame.draw.rect(screen, WHITE, (game.paddleL.x + draw_offset_x, game.paddleL.y + draw_offset_y, game.paddleL.width, game.paddleL.height))
-        pygame.draw.ellipse(screen, WHITE, (game.ball.x - game.ball.radius + draw_offset_x, game.ball.y - game.ball.radius + draw_offset_y, game.ball.radius * 2, game.ball.radius * 2))
+        draw_scores(screen, game, draw_offset_x, draw_offset_y)
+        draw_net(screen, game, draw_offset_x, draw_offset_y)
+        draw_game(screen, game, draw_offset_x, draw_offset_y)
 
         if game.GAME_OVER:
             txt = FONT_75_CS.render("Game Over", True, RED)
@@ -130,6 +116,47 @@ def run_multiplayer_game(screen: pygame.Surface):
             running = False
 
         pygame.display.update((draw_offset_x, draw_offset_y, game.game_area.width, game.game_area.height))
+
+
+def draw_game(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
+    pygame.draw.rect(screen, WHITE, (draw_offset_x, draw_offset_y, game.game_area.width, game.game_area.height), width=1)
+    pygame.draw.rect(screen, WHITE, (game.paddleR.x + draw_offset_x, game.paddleR.y + draw_offset_y, game.paddleR.width, game.paddleR.height))
+    pygame.draw.rect(screen, WHITE, (game.paddleL.x + draw_offset_x, game.paddleL.y + draw_offset_y, game.paddleL.width, game.paddleL.height))
+    pygame.draw.ellipse(screen, WHITE, (game.ball.x - game.ball.radius + draw_offset_x, game.ball.y - game.ball.radius + draw_offset_y, game.ball.radius * 2, game.ball.radius * 2))
+
+
+def draw_net(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
+    net_width = 4
+    net_segments = 8
+    margin = 50
+    net_segment_height = game.game_area.height // 20
+    step_size = (game.game_area.height - 2 * margin) // net_segments
+
+    for i in range(net_segments):
+        y = draw_offset_y + margin + (margin / 2) + i * step_size
+        pygame.draw.rect(screen, WHITE, ((draw_offset_x - net_width // 2) + game.game_area.width // 2, y, net_width, net_segment_height))
+
+
+def draw_scores(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
+    left_score_txt = FONT_50_CS.render(str(game.score_left), True, WHITE)
+    right_score_txt = FONT_50_CS.render(str(game.score_right), True, WHITE)
+    screen.blit(left_score_txt, (game.game_area.width // 4 - left_score_txt.get_width() // 2 - draw_offset_x, left_score_txt.get_height() // 2 - draw_offset_y))
+    screen.blit(right_score_txt, (game.game_area.width * (3 / 4) - right_score_txt.get_width() // 2 - draw_offset_x, right_score_txt.get_height() // 2 - draw_offset_y))
+
+
+def draw_hits(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
+    left_hits_txt = FONT_30_CS.render(str(game.hits_left), True, RED)
+    right_hits_txt = FONT_30_CS.render(str(game.hits_right), True, RED)
+    total_hits_txt = FONT_30_CS.render(str(game.hits_left + game.hits_right), True, RED)
+
+    # Left hits at bottom middle left (1/4)
+    screen.blit(left_hits_txt, (game.game_area.width // 4 - left_hits_txt.get_width() // 2 - draw_offset_x, game.game_area.height - left_hits_txt.get_height() - draw_offset_y))
+
+    # Right hits at bottom middle right (3/4)
+    screen.blit(right_hits_txt, (game.game_area.width * (3 / 4) - right_hits_txt.get_width() // 2 - draw_offset_x, game.game_area.height - right_hits_txt.get_height() - draw_offset_y))
+
+    # Total hits at bottom middle (2/4)
+    screen.blit(total_hits_txt, (game.game_area.width // 2 - total_hits_txt.get_width() // 2 - draw_offset_x, game.game_area.height - total_hits_txt.get_height() - draw_offset_y))
 
 
 if __name__ == "__main__":
