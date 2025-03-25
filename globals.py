@@ -12,6 +12,7 @@ FONT_75_CS = pygame.font.SysFont("comicsans", 75)
 FONT_60_CS = pygame.font.SysFont("comicsans", 60, bold=True)
 FONT_50_CS = pygame.font.SysFont("comicsans", 50)
 FONT_40_CS = pygame.font.SysFont("comicsans", 40)
+FONT_30_CS = pygame.font.SysFont("comicsans", 30)
 FONT_28_CS = pygame.font.SysFont("comicsans", 28)
 
 # Colors
