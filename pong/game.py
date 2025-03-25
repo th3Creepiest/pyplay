@@ -1,5 +1,3 @@
-# 🕹️ Pong Game
-
 import os
 import sys
 import logging
@@ -41,7 +39,7 @@ def display_welcome_screen(screen: pygame.Surface):
         screen.fill(BLACK)
 
         title_text = FONT_100_CS.render("PONG", True, WHITE)
-        title_rect = title_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4))
+        title_rect = title_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 5))
         screen.blit(title_text, title_rect)
 
         text_surface = FONT_50_CS.render("Multiplayer", True, WHITE)
@@ -133,7 +131,7 @@ def draw_net(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_of
     step_size = (game.game_area.height - 2 * margin) // net_segments
 
     for i in range(net_segments):
-        y = draw_offset_y + margin + (margin / 2) + i * step_size
+        y = draw_offset_y + margin + (margin / 2 - net_segment_height / 4) + i * step_size
         pygame.draw.rect(screen, WHITE, ((draw_offset_x - net_width // 2) + game.game_area.width // 2, y, net_width, net_segment_height))
 
 
