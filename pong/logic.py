@@ -12,6 +12,8 @@ class Game:
         self.game_area = GameArea(width, height)
         self.score_left = 0
         self.score_right = 0
+        self.hits_left = 0
+        self.hits_right = 0
 
         paddle_width = self.game_area.width * 0.018
         paddle_height = self.game_area.height * 0.18
@@ -49,6 +51,8 @@ class Game:
         self.GAME_OVER = False
         self.score_left = 0
         self.score_right = 0
+        self.hits_left = 0
+        self.hits_right = 0
 
     def move_right_paddle_up(self):
         if self.paddleR.y - self.paddleR.VELOCITY >= 0:
@@ -102,7 +106,9 @@ class Game:
             if self.ball.y >= self.paddleL.y and self.ball.y <= self.paddleL.y + self.paddleL.height:
                 if self.ball.x - self.ball.radius <= self.paddleL.x + self.paddleL.width:
                     self.ball.x_velocity *= -1
+                    self.hits_left += 1
 
+                    # Adjust ball velocity based on paddle position
                     middle_y = self.paddleL.y + self.paddleL.height / 2
                     y_difference = middle_y - self.ball.y
                     reduction_factor = (self.paddleL.height / 2) / self.ball.MAX_VELOCITY
@@ -112,7 +118,9 @@ class Game:
             if self.ball.y >= self.paddleR.y and self.ball.y <= self.paddleR.y + self.paddleR.height:
                 if self.ball.x + self.ball.radius >= self.paddleR.x:
                     self.ball.x_velocity *= -1
+                    self.hits_right += 1
 
+                    # Adjust ball velocity based on paddle position
                     middle_y = self.paddleR.y + self.paddleR.height / 2
                     y_difference = middle_y - self.ball.y
                     reduction_factor = (self.paddleR.height / 2) / self.ball.MAX_VELOCITY
