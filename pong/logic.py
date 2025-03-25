@@ -1,5 +1,5 @@
-# 🕹️ Pong Game Objects
-
+import random
+import math
 from dataclasses import dataclass
 
 
@@ -39,11 +39,13 @@ class Game:
             radius=ball_radius,
         )
 
+        self._set_ball_velocity()
+
     def update(self):
         self.ball.move()
         self.handle_collisions()
         self.check_goal()
-        self.check_game_over()
+        self._check_game_over()
 
     def reset(self):
         self.reset_ball()
@@ -74,25 +76,22 @@ class Game:
         if self.ball.x < 0:
             self.score_right += 1
             self.reset_ball()
+            self.reset_paddles()
         elif self.ball.x > self.game_area.width:
             self.score_left += 1
             self.reset_ball()
+            self.reset_paddles()
 
     def reset_ball(self):
         self.ball.x = self.game_area.width // 2
         self.ball.y = self.game_area.height // 2
-        self.ball.y_velocity = 0
-        self.ball.x_velocity *= -1
+        self._set_ball_velocity()
 
     def reset_paddles(self):
         self.paddleL.x = self.game_area.width * 0.05
         self.paddleL.y = self.game_area.height // 2 - self.paddleL.height // 2
         self.paddleR.x = self.game_area.width - self.paddleR.width - self.game_area.width * 0.05
         self.paddleR.y = self.game_area.height // 2 - self.paddleR.height // 2
-
-    def check_game_over(self):
-        if self.score_left >= self.WINNING_SCORE or self.score_right >= self.WINNING_SCORE:
-            self.GAME_OVER = True
 
     def handle_collisions(self):
 
@@ -125,6 +124,23 @@ class Game:
                     y_difference = middle_y - self.ball.y
                     reduction_factor = (self.paddleR.height / 2) / self.ball.MAX_VELOCITY
                     self.ball.y_velocity = (y_difference / reduction_factor) * -1
+
+    def _check_game_over(self):
+        if self.score_left >= self.WINNING_SCORE or self.score_right >= self.WINNING_SCORE:
+            self.GAME_OVER = True
+
+    def _set_ball_velocity(self):
+        angle = self._get_random_angle(-30, 30, [0])
+        x_vel = abs(math.cos(angle) * self.ball.MAX_VELOCITY)
+        y_vel = math.sin(angle) * self.ball.MAX_VELOCITY
+        self.ball.x_velocity = -x_vel if self.ball.x_velocity > 0 else x_vel
+        self.ball.y_velocity = y_vel
+
+    def _get_random_angle(self, min_angle: int, max_angle: int, excluded: list[int]) -> float:
+        angle = 0
+        while angle in excluded:
+            angle = math.radians(random.randrange(min_angle, max_angle))
+        return angle
 
 
 @dataclass
@@ -159,7 +175,7 @@ class Ball:
         self.x = x
         self.y = y
         self.radius = radius
-        self.x_velocity = self.MAX_VELOCITY
+        self.x_velocity = 0
         self.y_velocity = 0
 
     def move(self):
