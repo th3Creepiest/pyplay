@@ -6,7 +6,7 @@ import logging
 import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import BLACK, WHITE, RED, FONT_100_CS, FONT_75_CS, FONT_50_CS, FONT_40_CS
+from globals import BLACK, WHITE, RED, FONT_100_CS, FONT_75_CS, FONT_50_CS, FONT_28_CS
 
 try:
     from logic import Game
@@ -44,11 +44,25 @@ def display_welcome_screen(screen: pygame.Surface):
         title_rect = title_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4))
         screen.blit(title_text, title_rect)
 
-        instructions = ["Player 1: W (up), S (down)", "Player 2: Up Arrow, Down Arrow", "Press SPACE to start"]
-        for i, text in enumerate(instructions):
-            text_surface = FONT_40_CS.render(text, True, WHITE)
-            text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + i * 50))
-            screen.blit(text_surface, text_rect)
+        text_surface = FONT_50_CS.render("Multiplayer", True, WHITE)
+        text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
+        screen.blit(text_surface, text_rect)
+
+        text_surface1 = FONT_28_CS.render("Player 1: W (up), S (down)", True, WHITE)
+        text_rect1 = text_surface1.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+        screen.blit(text_surface1, text_rect1)
+
+        text_surface2 = FONT_28_CS.render("Player 2: Up Arrow, Down Arrow", True, WHITE)
+        text_rect2 = text_surface2.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
+        screen.blit(text_surface2, text_rect2)
+
+        text_surface3 = FONT_28_CS.render("Press SPACE to start", True, WHITE)
+        text_rect3 = text_surface3.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 150))
+        border_rect = pygame.Rect(text_rect3.left - 10, text_rect3.top, text_rect3.width + 20, text_rect3.height)
+        flash_color = WHITE if int(pygame.time.get_ticks() / 500) % 2 == 0 else BLACK
+        pygame.draw.rect(screen, flash_color, border_rect, 2)
+
+        screen.blit(text_surface3, text_rect3)
 
         pygame.display.flip()
 
