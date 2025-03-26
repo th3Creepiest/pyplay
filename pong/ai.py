@@ -8,19 +8,15 @@ import pygame
 
 try:
     from logic import Game
-    from game import draw_game, draw_net, draw_scores, draw_hits
-    from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+    from draw import draw_game, draw_net, draw_scores, draw_hits
+    from constants import SCREEN_WIDTH, SCREEN_HEIGHT, BEST_PICKLE, CHECKPOINT_DIR
 except ImportError:
     from .logic import Game
-    from .game import draw_game, draw_net, draw_scores, draw_hits
-    from .constants import SCREEN_WIDTH, SCREEN_HEIGHT
+    from .draw import draw_game, draw_net, draw_scores, draw_hits
+    from .constants import SCREEN_WIDTH, SCREEN_HEIGHT, BEST_PICKLE, CHECKPOINT_DIR
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from globals import BLACK
-
-BEST_PICKLE = "pong/best.pickle"
-CHECKPOINT_DIR = "pong/checkpoints/"
-DRAW_TRAINING = False
 
 
 class PongAi:
@@ -64,11 +60,16 @@ class PongAi:
             self.window.fill(BLACK)
             draw_scores(self.window, self.game)
             draw_net(self.window, self.game)
-            draw_hits(self.window, self.game)
             draw_game(self.window, self.game)
             pygame.display.flip()
 
-    def train_ai(self, genome1: neat.genome.DefaultGenome, genome2: neat.genome.DefaultGenome, neat_config: neat.Config):
+    def train_ai(
+        self,
+        genome1: neat.genome.DefaultGenome,
+        genome2: neat.genome.DefaultGenome,
+        neat_config: neat.Config,
+        draw: bool = False,
+    ):
         net1 = neat.nn.FeedForwardNetwork.create(genome1, neat_config)
         net2 = neat.nn.FeedForwardNetwork.create(genome2, neat_config)
         self.genome1 = genome1
@@ -90,7 +91,7 @@ class PongAi:
             self.game.update()
             self._move_ai_paddles(net1, net2)
 
-            if DRAW_TRAINING:
+            if draw:
                 self.window.fill(BLACK)
                 draw_scores(self.window, self.game)
                 draw_net(self.window, self.game)
@@ -133,17 +134,22 @@ class PongAi:
 
 
 def eval_genomes(genomes: list[tuple[int, neat.genome.DefaultGenome]], neat_config: neat.Config):
-    win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     for i, (_, genome1) in enumerate(genomes):
         print(f"Progress: {round(i / len(genomes) * 100)}%", end="\r", flush=True)
         genome1.fitness = 0
         for _, genome2 in genomes[min(i + 1, len(genomes) - 1) :]:
             genome2.fitness = 0 if genome2.fitness is None else genome2.fitness
-            pong = PongAi(win, SCREEN_WIDTH, SCREEN_HEIGHT)
+            pong = PongAi(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
             pong.train_ai(genome1, genome2, neat_config)
 
 
-def run_neat(num_generations: int, neat_config: neat.Config, checkpoint_dir=CHECKPOINT_DIR, checkpoint: str | None = None):
+def run_neat(
+    num_generations: int,
+    neat_config: neat.Config,
+    checkpoint_dir: str = CHECKPOINT_DIR,
+    checkpoint: str | None = None,
+):
     if checkpoint:
         p = neat.Checkpointer.restore_checkpoint(os.path.join(checkpoint_dir, checkpoint))
     else:
@@ -152,23 +158,23 @@ def run_neat(num_generations: int, neat_config: neat.Config, checkpoint_dir=CHEC
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(1, filename_prefix=f"{CHECKPOINT_DIR}neat-checkpoint-"))
+    p.add_reporter(neat.Checkpointer(1, filename_prefix=f"{checkpoint_dir}neat-checkpoint-"))
     winner = p.run(eval_genomes, num_generations)
 
     with open(BEST_PICKLE, "wb") as f:
         pickle.dump(winner, f)
 
 
-def test_best_network(neat_config: neat.Config):
+def test_best_network(screen: pygame.Surface, neat_config: neat.Config):
     with open(BEST_PICKLE, "rb") as f:
         winner = pickle.load(f)
     winner_net = neat.nn.FeedForwardNetwork.create(winner, neat_config)
-    win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pong = PongAi(win, SCREEN_WIDTH, SCREEN_HEIGHT)
+    pong = PongAi(screen, screen.get_width(), screen.get_height())
     pong.test_ai(winner_net)
 
 
 if __name__ == "__main__":
+    pygame.display.set_caption("Ai Pong")
 
     if not os.path.isdir(CHECKPOINT_DIR):
         os.makedirs(CHECKPOINT_DIR)
@@ -179,11 +185,10 @@ if __name__ == "__main__":
 
     checkpoints = os.listdir(CHECKPOINT_DIR)
     last_checkpoint = max(checkpoints, key=lambda x: int(x.split("-")[-1]))
-    print(last_checkpoint)
 
-    pygame.display.set_caption("Ai Pong")
+    win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
     run_neat(5, config, checkpoint=last_checkpoint)
-    test_best_network(config)
+    test_best_network(win, config)
 
     pygame.quit()
