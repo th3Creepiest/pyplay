@@ -2,6 +2,10 @@
 
 A few games built with **pygame** for fun and learning with a smidgen of ai. 🚀
 
+<div align="center">
+<img src="art/icon.png" width="250">
+</div>
+
 Here, you'll find:
 
 - 🕹️ a simple **Pong** game
@@ -17,9 +21,3 @@ Here, you'll find:
 4. Run: `python __main__.py`
 
 Feel free to explore and enjoy! 🎮✨
-
-<div align="center">
-<img src="art/icon.png" width="250">
-</div>
-
----
