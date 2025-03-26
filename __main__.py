@@ -58,6 +58,7 @@ while running:
             elif event.key in [pygame.K_RETURN, pygame.K_SPACE]:
                 _, game_func = GAMES[selected]
                 game_func()
+                screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 pygame.quit()
 sys.exit()
