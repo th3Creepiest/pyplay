@@ -24,6 +24,7 @@ DRAW_TRAINING = False
 
 
 class PongAi:
+
     def __init__(self, window: pygame.Surface, width: int, height: int):
         self.genome1: neat.genome.DefaultGenome
         self.genome2: neat.genome.DefaultGenome
@@ -39,8 +40,12 @@ class PongAi:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    run = False
-                    break
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        run = False
+                        break
 
             output = net.activate((self.game.paddleR.y, abs(self.game.paddleR.x - self.game.ball.x), self.game.ball.y))
             decision = output.index(max(output))
@@ -75,7 +80,12 @@ class PongAi:
         while run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return True
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        run = False
+                        break
 
             self.game.update()
             self._move_ai_paddles(net1, net2)
@@ -97,7 +107,7 @@ class PongAi:
         self.genome1.fitness += self.game.hits_left + duration
         self.genome2.fitness += self.game.hits_right + duration
 
-    def _move_ai_paddles(self, net1, net2):
+    def _move_ai_paddles(self, net1: neat.nn.FeedForwardNetwork, net2: neat.nn.FeedForwardNetwork):
         players = [(self.genome1, net1, self.game.paddleL, True), (self.genome2, net2, self.game.paddleR, False)]
 
         for genome, net, paddle, left in players:
@@ -122,7 +132,7 @@ class PongAi:
                 genome.fitness -= 1
 
 
-def eval_genomes(genomes, neat_config: neat.Config):
+def eval_genomes(genomes: list[tuple[int, neat.genome.DefaultGenome]], neat_config: neat.Config):
     win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     for i, (_, genome1) in enumerate(genomes):
         print(f"Progress: {round(i / len(genomes) * 100)}%", end="\r", flush=True)
@@ -133,8 +143,12 @@ def eval_genomes(genomes, neat_config: neat.Config):
             pong.train_ai(genome1, genome2, neat_config)
 
 
-def run_neat(num_generations: int, neat_config: neat.Config):
-    p = neat.Population(neat_config)
+def run_neat(num_generations: int, neat_config: neat.Config, checkpoint_dir=CHECKPOINT_DIR, checkpoint: str | None = None):
+    if checkpoint:
+        p = neat.Checkpointer.restore_checkpoint(os.path.join(checkpoint_dir, checkpoint))
+    else:
+        p = neat.Population(neat_config)
+
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
@@ -155,6 +169,7 @@ def test_best_network(neat_config: neat.Config):
 
 
 if __name__ == "__main__":
+
     if not os.path.isdir(CHECKPOINT_DIR):
         os.makedirs(CHECKPOINT_DIR)
 
@@ -162,7 +177,13 @@ if __name__ == "__main__":
     config_path = os.path.join(local_dir, "config.txt")
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
 
+    checkpoints = os.listdir(CHECKPOINT_DIR)
+    last_checkpoint = max(checkpoints, key=lambda x: int(x.split("-")[-1]))
+    print(last_checkpoint)
+
     pygame.display.set_caption("Ai Pong")
 
-    run_neat(5, config)
+    run_neat(5, config, checkpoint=last_checkpoint)
     test_best_network(config)
+
+    pygame.quit()
