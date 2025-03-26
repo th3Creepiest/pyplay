@@ -105,7 +105,7 @@ def run_multiplayer_game(screen: pygame.Surface):
         draw_net(screen, game, draw_offset_x, draw_offset_y)
         draw_game(screen, game, draw_offset_x, draw_offset_y)
 
-        if game.GAME_OVER:
+        if game.game_over:
             txt = FONT_75_CS.render("Game Over", True, RED)
             txt_rect = txt.get_rect(center=(screen_width // 2, screen_height // 2))
             screen.blit(txt, txt_rect)
@@ -158,10 +158,9 @@ def draw_hits(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_o
 
 
 if __name__ == "__main__":
-    TITLE = "Pong"
-    SCREEN_WIDTH = 800
-    SCREEN_HEIGHT = 600
-    pygame.display.set_caption(TITLE)
+    from constants import SCREEN_WIDTH, SCREEN_HEIGHT  # pylint: disable=import-error
+
+    pygame.display.set_caption("Pong")
     pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     main()
     pygame.quit()
