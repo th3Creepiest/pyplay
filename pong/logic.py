@@ -1,12 +1,11 @@
-import random
 import math
+import random
 from dataclasses import dataclass
 
 
 @dataclass
 class Game:
     WINNING_SCORE = 3
-    GAME_OVER = False
 
     def __init__(self, width: int, height: int):
         self.game_area = GameArea(width, height)
@@ -45,36 +44,46 @@ class Game:
     def total_hits(self) -> int:
         return self.hits_left + self.hits_right
 
+    @property
+    def game_over(self) -> bool:
+        return self.score_left >= self.WINNING_SCORE or self.score_right >= self.WINNING_SCORE
+
     def update(self):
         self.ball.move()
         self.handle_collisions()
         self.check_goal()
-        self._check_game_over()
 
     def reset(self):
         self.reset_ball()
         self.reset_paddles()
-        self.GAME_OVER = False
         self.score_left = 0
         self.score_right = 0
         self.hits_left = 0
         self.hits_right = 0
 
-    def move_right_paddle_up(self):
+    def move_right_paddle_up(self) -> bool:
         if self.paddleR.y - self.paddleR.VELOCITY >= 0:
             self.paddleR.move_up()
+            return True
+        return False
 
-    def move_right_paddle_down(self):
+    def move_right_paddle_down(self) -> bool:
         if self.paddleR.y + self.paddleR.VELOCITY <= self.game_area.height - self.paddleR.height:
             self.paddleR.move_down()
+            return True
+        return False
 
-    def move_left_paddle_up(self):
+    def move_left_paddle_up(self) -> bool:
         if self.paddleL.y - self.paddleL.VELOCITY >= 0:
             self.paddleL.move_up()
+            return True
+        return False
 
-    def move_left_paddle_down(self):
+    def move_left_paddle_down(self) -> bool:
         if self.paddleL.y + self.paddleL.VELOCITY <= self.game_area.height - self.paddleL.height:
             self.paddleL.move_down()
+            return True
+        return False
 
     def check_goal(self):
         if self.ball.x < 0:
@@ -128,10 +137,6 @@ class Game:
                     y_difference = middle_y - self.ball.y
                     reduction_factor = (self.paddleR.height / 2) / self.ball.MAX_VELOCITY
                     self.ball.y_velocity = (y_difference / reduction_factor) * -1
-
-    def _check_game_over(self):
-        if self.score_left >= self.WINNING_SCORE or self.score_right >= self.WINNING_SCORE:
-            self.GAME_OVER = True
 
     def _set_ball_velocity(self):
         angle = self._get_random_angle(-30, 30, [0])
