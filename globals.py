@@ -14,6 +14,8 @@ FONT_50_CS = pygame.font.SysFont("comicsans", 50)
 FONT_40_CS = pygame.font.SysFont("comicsans", 40)
 FONT_30_CS = pygame.font.SysFont("comicsans", 30)
 FONT_28_CS = pygame.font.SysFont("comicsans", 28)
+FONT_14_CS = pygame.font.SysFont("comicsans", 14)
+FONT_12_CS = pygame.font.SysFont("comicsans", 12)
 
 # Colors
 BLACK = (0, 0, 0)
