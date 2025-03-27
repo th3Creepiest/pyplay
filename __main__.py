@@ -1,5 +1,7 @@
 import sys
 import pygame
+
+import flappy
 import tetris
 import pong
 import snake
@@ -14,6 +16,7 @@ GAMES = [
     ("Pong", pong.main),
     ("Snake", snake.main),
     ("Game of Life", game_of_life.main),
+    ("Flappy", flappy.main),
 ]
 
 pygame.display.set_caption("PyPlay")
