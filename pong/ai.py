@@ -19,6 +19,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from globals import BLACK
 
 
+DRAW = False
+
+
 class PongAi:
 
     def __init__(self, window: pygame.Surface, width: int, height: int):
@@ -68,7 +71,7 @@ class PongAi:
         genome1: neat.genome.DefaultGenome,
         genome2: neat.genome.DefaultGenome,
         neat_config: neat.Config,
-        draw: bool = False,
+        draw: bool = DRAW,
     ):
         net1 = neat.nn.FeedForwardNetwork.create(genome1, neat_config)
         net2 = neat.nn.FeedForwardNetwork.create(genome2, neat_config)
