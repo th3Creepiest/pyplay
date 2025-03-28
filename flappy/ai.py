@@ -7,23 +7,16 @@ import pygame
 
 try:
     from .game_objects import Bird, Pipe, Base, BackGround
-    from .constants import WINDOW_WIDTH, WINDOW_HEIGHT
+    from .constants import WINDOW_WIDTH, WINDOW_HEIGHT, LOCAL_DIR, BEST_PICKLE
 except ImportError:
     from game_objects import Bird, Pipe, Base, BackGround
-    from constants import WINDOW_WIDTH, WINDOW_HEIGHT
+    from constants import WINDOW_WIDTH, WINDOW_HEIGHT, LOCAL_DIR, BEST_PICKLE
 
-pygame.font.init()
-
-
-LOCAL_DIR = os.path.dirname(__file__)
-BEST_PICKLE = f"{LOCAL_DIR}/best.pickle"
 
 FLOOR = 730
 DRAW_LINES = False
-STAT_FONT = pygame.font.SysFont("comicsans", 50)
 
 gen = 0
-win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 
 def eval_genomes(genomes, config):
@@ -32,8 +25,10 @@ def eval_genomes(genomes, config):
     birds and sets their fitness based on the distance they
     reach in the game.
     """
-    global win, gen
+    global gen
     gen += 1
+
+    win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # start by creating lists holding the genome itself, the
     # neural network associated with the genome and the
@@ -160,16 +155,18 @@ def draw_window(window, birds, pipes, base, score, generation, pipe_ind):
         # draw bird
         bird.draw(window)
 
+    stat_font = pygame.font.SysFont("comicsans", 50)
+
     # score
-    score_label = STAT_FONT.render("Score: " + str(score), 1, (255, 255, 255))
+    score_label = stat_font.render("Score: " + str(score), 1, (255, 255, 255))
     window.blit(score_label, (WINDOW_WIDTH - score_label.get_width() - 15, 10))
 
     # generations
-    score_label = STAT_FONT.render("Gens: " + str(generation - 1), 1, (255, 255, 255))
+    score_label = stat_font.render("Gens: " + str(generation - 1), 1, (255, 255, 255))
     window.blit(score_label, (10, 10))
 
     # alive
-    score_label = STAT_FONT.render("Alive: " + str(len(birds)), 1, (255, 255, 255))
+    score_label = stat_font.render("Alive: " + str(len(birds)), 1, (255, 255, 255))
     window.blit(score_label, (10, 50))
 
     pygame.display.update()
@@ -194,5 +191,6 @@ def run_neat(
 
 
 if __name__ == "__main__":
+    pygame.init()
     run_neat(eval_genomes, 50)
     pygame.quit()

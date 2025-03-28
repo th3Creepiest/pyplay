@@ -1,26 +1,17 @@
-import os
 import sys
-import logging
 import pygame
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import BLACK, FONT_50, FONT_40, GREEN, GRAY
 
 try:
     from .ai import run_neat, eval_genomes
     from .game_objects import Bird, Pipe, Base, BackGround
-    from .constants import WINDOW_WIDTH, WINDOW_HEIGHT
+    from .constants import WINDOW_WIDTH, WINDOW_HEIGHT, BLACK, GREEN, GREY
 except ImportError:
     from ai import run_neat, eval_genomes
     from game_objects import Bird, Pipe, Base, BackGround
-    from constants import WINDOW_WIDTH, WINDOW_HEIGHT
-
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    from constants import WINDOW_WIDTH, WINDOW_HEIGHT, BLACK, GREEN, GREY
 
 
 def main():
-    logging.info("launching flappy game")
     pygame.display.set_caption("Flappy")
     pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     screen = pygame.display.get_surface()
@@ -28,8 +19,9 @@ def main():
 
 
 def display_menu(screen: pygame.Surface):
-    logging.info("displaying menu screen")
     clock = pygame.time.Clock()
+    font_50 = pygame.font.SysFont("arial", 50)
+    font_40 = pygame.font.SysFont("arial", 40)
 
     while True:
         clock.tick(30)
@@ -47,9 +39,9 @@ def display_menu(screen: pygame.Surface):
 
         screen.fill(BLACK)
 
-        title = FONT_50.render("Flappy", True, GREEN)
-        human_text = FONT_40.render("Press H for Human Player", True, GRAY)
-        ai_text = FONT_40.render("Press A for AI Player", True, GRAY)
+        title = font_50.render("Flappy", True, GREEN)
+        human_text = font_40.render("Press H for Human Player", True, GREY)
+        ai_text = font_40.render("Press A for AI Player", True, GREY)
 
         title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
         human_rect = human_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
@@ -103,5 +95,6 @@ def run_human_game(screen: pygame.Surface):
 
 
 if __name__ == "__main__":
+    pygame.init()
     main()
     pygame.quit()

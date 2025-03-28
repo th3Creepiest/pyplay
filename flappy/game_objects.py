@@ -2,8 +2,10 @@ import os
 import random
 import pygame
 
-
-LOCAL_DIR = os.path.dirname(__file__)
+try:
+    from .constants import LOCAL_DIR
+except ImportError:
+    from constants import LOCAL_DIR
 
 
 class Bird:
