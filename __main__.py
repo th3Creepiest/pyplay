@@ -1,4 +1,3 @@
-import sys
 import pygame
 
 import flappy
@@ -8,8 +7,11 @@ import tetris
 import game_of_life
 
 
+TITLE = "PyPlay"
+
+
 pygame.init()
-pygame.display.set_caption("PyPlay")
+pygame.display.set_caption(TITLE)
 pygame.display.set_icon(pygame.image.load("art/icon.jpg"))
 
 
@@ -77,6 +79,6 @@ while running:
                 _, game_func = GAMES[selected]
                 game_func()
                 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+                pygame.display.set_caption(TITLE)
 
 pygame.quit()
-sys.exit()
