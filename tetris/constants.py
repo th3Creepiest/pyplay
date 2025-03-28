@@ -1,11 +1,23 @@
-import sys
-import os
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import RED, GREEN, BLUE, YELLOW, CYAN, PINK
+PLAY_WIDTH = 300  # meaning 300 // 10 = 30 width per block
+PLAY_HEIGHT = 600  # meaning 600 // 20 = 30 height per block
+BLOCK_SIZE = 30
 
+TOP_LEFT_X = (SCREEN_WIDTH - PLAY_WIDTH) // 2
+TOP_LEFT_Y = (SCREEN_HEIGHT - PLAY_HEIGHT) // 2
 
-# Piece colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREY = (50, 50, 50)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+CYAN = (0, 255, 255)
+PINK = (255, 165, 0)
+
 COLORS = [CYAN, PINK, YELLOW, GREEN, RED, PINK, BLUE]  # I  # T  # O  # S  # Z  # L  # J
 
 I_SHAPE = [

@@ -1,186 +1,50 @@
-"""️🎮 Tetris Game"""
-
-import os
 import sys
 import random
 import pygame
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import BLACK, WHITE, GRAY, RED, FONT_60_CS, FONT_28_CS
-
 try:
-    from .shapes import SHAPES, COLORS
+    from .game_objects import Piece
+    from .constants import (
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
+        PLAY_WIDTH,
+        PLAY_HEIGHT,
+        BLOCK_SIZE,
+        TOP_LEFT_X,
+        TOP_LEFT_Y,
+        SHAPES,
+        COLORS,
+        BLACK,
+        WHITE,
+        GREY,
+        RED,
+    )
 except ImportError:
-    from shapes import SHAPES, COLORS
-
-
-# Screen dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-PLAY_WIDTH = 300  # meaning 300 // 10 = 30 width per block
-PLAY_HEIGHT = 600  # meaning 600 // 20 = 30 height per block
-BLOCK_SIZE = 30
-
-# Position constants
-TOP_LEFT_X = (SCREEN_WIDTH - PLAY_WIDTH) // 2
-TOP_LEFT_Y = (SCREEN_HEIGHT - PLAY_HEIGHT) // 2
-
-
-class Piece:
-    def __init__(self, shape, color):
-        self.shape = shape
-        self.color = color
-        self.rotation = 0
-        self.x = 3
-        self.y = 0
-
-    def rotate(self):
-        self.rotation = (self.rotation + 1) % 4
-
-    def get_shape(self):
-        return self.shape[self.rotation]
-
-    def move_down(self):
-        self.y += 1
-
-    def move_left(self):
-        self.x -= 1
-
-    def move_right(self):
-        self.x += 1
-
-
-def new_piece():
-    shape_index = random.randint(0, len(SHAPES) - 1)
-    return Piece(SHAPES[shape_index], COLORS[shape_index])
-
-
-def create_grid(locked_positions=None):
-    if locked_positions is None:
-        locked_positions = {}
-
-    grid = [[BLACK for _ in range(10)] for _ in range(20)]
-
-    for i, row in enumerate(grid):
-        for j, _ in enumerate(row):
-            if (j, i) in locked_positions:
-                grid[i][j] = locked_positions[(j, i)]
-
-    return grid
-
-
-def draw_grid(surface, grid):
-    for i, row in enumerate(grid):
-        for j, _ in enumerate(row):
-            pygame.draw.rect(surface, grid[i][j], (TOP_LEFT_X + j * BLOCK_SIZE, TOP_LEFT_Y + i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
-
-    # Draw grid lines
-    for i in range(len(grid) + 1):
-        pygame.draw.line(surface, WHITE, (TOP_LEFT_X, TOP_LEFT_Y + i * BLOCK_SIZE), (TOP_LEFT_X + PLAY_WIDTH, TOP_LEFT_Y + i * BLOCK_SIZE))
-
-    for j in range(len(grid[0]) + 1):
-        pygame.draw.line(surface, WHITE, (TOP_LEFT_X + j * BLOCK_SIZE, TOP_LEFT_Y), (TOP_LEFT_X + j * BLOCK_SIZE, TOP_LEFT_Y + PLAY_HEIGHT))
-
-
-def draw_piece(surface, piece):
-    shape = piece.get_shape()
-    for i, row in enumerate(shape):
-        for j, cell in enumerate(row):
-            if cell:
-                pygame.draw.rect(surface, piece.color, (TOP_LEFT_X + (piece.x + j) * BLOCK_SIZE, TOP_LEFT_Y + (piece.y + i) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
-
-
-def valid_space(piece, grid):
-    shape = piece.get_shape()
-
-    for i, row in enumerate(shape):
-        for j, cell in enumerate(row):
-            if cell:
-                x = piece.x + j
-                y = piece.y + i
-                if x < 0 or x >= 10 or y >= 20 or (y >= 0 and grid[y][x] != BLACK):
-                    return False
-    return True
-
-
-def clear_rows(grid, locked):
-    cleared = 0
-    for i in range(len(grid) - 1, -1, -1):
-        row = grid[i]
-        if BLACK not in row:
-            cleared += 1
-
-            # Remove the row
-            for j in range(len(row)):
-                try:
-                    del locked[(j, i)]
-                except KeyError:
-                    continue
-
-            # Shift every row above down one
-            for key in sorted(list(locked), key=lambda x: x[1])[::-1]:
-                x, y = key
-                if y < i:
-                    new_key = (x, y + 1)
-                    locked[new_key] = locked.pop(key)
-
-    return cleared
-
-
-def draw_text_middle(surface, text, color):
-    label = FONT_60_CS.render(text, 1, color)
-    surface.blit(label, (SCREEN_WIDTH / 2 - (label.get_width() / 2), SCREEN_HEIGHT / 2 - (label.get_height() / 2)))
-
-
-def draw_score(surface, score, level, high_score=0):
-    label_score = FONT_28_CS.render(f"Score: {score}", 1, WHITE)
-    label_level = FONT_28_CS.render(f"Level: {level}", 1, WHITE)
-    label_high_score = FONT_28_CS.render(f"High Score: {high_score}", 1, WHITE)
-
-    # Position for score display - left side of the screen
-    score_x = 30
-    surface.blit(label_score, (score_x, 50))
-    surface.blit(label_level, (score_x, 80))
-    surface.blit(label_high_score, (score_x, 110))
-
-
-def draw_next_piece(surface, piece):
-    preview_x = SCREEN_WIDTH - 180
-    preview_y = 100
-    preview_box_size = 150
-
-    # Draw the preview box
-    pygame.draw.rect(surface, GRAY, (preview_x - 10, preview_y - 10, preview_box_size, preview_box_size), 1)
-
-    # Calculate the size of the piece
-    shape = piece.get_shape()
-    piece_height = len(shape)
-    piece_width = len(shape[0]) if piece_height > 0 else 0
-
-    # Calculate offsets to center the piece in the preview box
-    offset_x = (preview_box_size - piece_width * BLOCK_SIZE) // 2
-    offset_y = (preview_box_size - piece_height * BLOCK_SIZE) // 2
-
-    # Draw the next piece
-    for i, row in enumerate(shape):
-        for j, cell in enumerate(row):
-            if cell:
-                pygame.draw.rect(surface, piece.color, (preview_x + offset_x + j * BLOCK_SIZE, preview_y + offset_y + i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
-
-
-def instant_drop(piece, grid):
-    """Move the piece down until it hits something"""
-    while valid_space(piece, grid):
-        piece.y += 1
-    piece.y -= 1  # Move back up one step since we went too far
-    return True  # Return True to indicate the piece has landed
+    from game_objects import Piece
+    from constants import (
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
+        PLAY_WIDTH,
+        PLAY_HEIGHT,
+        BLOCK_SIZE,
+        TOP_LEFT_X,
+        TOP_LEFT_Y,
+        SHAPES,
+        COLORS,
+        BLACK,
+        WHITE,
+        GREY,
+        RED,
+    )
 
 
 def main():
-    run = True
-    paused = False
+    pygame.display.set_caption("Tetris")
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
+
+    run = True
+    paused = False
     grid = create_grid()
     current_piece = new_piece()
     next_piece = new_piece()
@@ -289,9 +153,9 @@ def main():
 
             # Key release events
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_h:
+                if event.key in (pygame.K_LEFT, pygame.K_h):
                     key_left_pressed = False
-                elif event.key == pygame.K_RIGHT or event.key == pygame.K_l:
+                elif event.key in (pygame.K_RIGHT, pygame.K_l):
                     key_right_pressed = False
                 elif event.key == pygame.K_DOWN:
                     key_down_pressed = False
@@ -366,7 +230,7 @@ def main():
         screen.fill(BLACK)
 
         # Draw play area border
-        pygame.draw.rect(screen, GRAY, (TOP_LEFT_X - 5, TOP_LEFT_Y - 5, PLAY_WIDTH + 10, PLAY_HEIGHT + 10), 5)
+        pygame.draw.rect(screen, GREY, (TOP_LEFT_X - 5, TOP_LEFT_Y - 5, PLAY_WIDTH + 10, PLAY_HEIGHT + 10), 5)
 
         draw_grid(screen, grid)
         draw_piece(screen, current_piece)
@@ -376,6 +240,134 @@ def main():
         pygame.display.update()
 
 
+def new_piece():
+    shape_index = random.randint(0, len(SHAPES) - 1)
+    return Piece(SHAPES[shape_index], COLORS[shape_index])
+
+
+def create_grid(locked_positions=None):
+    if locked_positions is None:
+        locked_positions = {}
+
+    grid = [[BLACK for _ in range(10)] for _ in range(20)]
+
+    for i, row in enumerate(grid):
+        for j, _ in enumerate(row):
+            if (j, i) in locked_positions:
+                grid[i][j] = locked_positions[(j, i)]
+
+    return grid
+
+
+def draw_grid(surface, grid):
+    for i, row in enumerate(grid):
+        for j, _ in enumerate(row):
+            pygame.draw.rect(surface, grid[i][j], (TOP_LEFT_X + j * BLOCK_SIZE, TOP_LEFT_Y + i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
+
+    # Draw grid lines
+    for i in range(len(grid) + 1):
+        pygame.draw.line(surface, WHITE, (TOP_LEFT_X, TOP_LEFT_Y + i * BLOCK_SIZE), (TOP_LEFT_X + PLAY_WIDTH, TOP_LEFT_Y + i * BLOCK_SIZE))
+
+    for j in range(len(grid[0]) + 1):
+        pygame.draw.line(surface, WHITE, (TOP_LEFT_X + j * BLOCK_SIZE, TOP_LEFT_Y), (TOP_LEFT_X + j * BLOCK_SIZE, TOP_LEFT_Y + PLAY_HEIGHT))
+
+
+def draw_piece(surface, piece):
+    shape = piece.get_shape()
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell:
+                pygame.draw.rect(surface, piece.color, (TOP_LEFT_X + (piece.x + j) * BLOCK_SIZE, TOP_LEFT_Y + (piece.y + i) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
+
+
+def valid_space(piece, grid):
+    shape = piece.get_shape()
+
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell:
+                x = piece.x + j
+                y = piece.y + i
+                if x < 0 or x >= 10 or y >= 20 or (y >= 0 and grid[y][x] != BLACK):
+                    return False
+    return True
+
+
+def clear_rows(grid, locked):
+    cleared = 0
+    for i in range(len(grid) - 1, -1, -1):
+        row = grid[i]
+        if BLACK not in row:
+            cleared += 1
+
+            # Remove the row
+            for j in range(len(row)):
+                try:
+                    del locked[(j, i)]
+                except KeyError:
+                    continue
+
+            # Shift every row above down one
+            for key in sorted(list(locked), key=lambda x: x[1])[::-1]:
+                x, y = key
+                if y < i:
+                    new_key = (x, y + 1)
+                    locked[new_key] = locked.pop(key)
+
+    return cleared
+
+
+def draw_text_middle(surface, text, color):
+    FONT_60_CS = pygame.font.SysFont("comicsans", 60, bold=True)
+    label = FONT_60_CS.render(text, 1, color)
+    surface.blit(label, (SCREEN_WIDTH / 2 - (label.get_width() / 2), SCREEN_HEIGHT / 2 - (label.get_height() / 2)))
+
+
+def draw_score(surface, score, level, high_score=0):
+    FONT_28_CS = pygame.font.SysFont("comicsans", 28)
+    label_score = FONT_28_CS.render(f"Score: {score}", 1, WHITE)
+    label_level = FONT_28_CS.render(f"Level: {level}", 1, WHITE)
+    label_high_score = FONT_28_CS.render(f"High Score: {high_score}", 1, WHITE)
+
+    # Position for score display - left side of the screen
+    score_x = 30
+    surface.blit(label_score, (score_x, 50))
+    surface.blit(label_level, (score_x, 80))
+    surface.blit(label_high_score, (score_x, 110))
+
+
+def draw_next_piece(surface, piece):
+    preview_x = SCREEN_WIDTH - 180
+    preview_y = 100
+    preview_box_size = 150
+
+    # Draw the preview box
+    pygame.draw.rect(surface, GREY, (preview_x - 10, preview_y - 10, preview_box_size, preview_box_size), 1)
+
+    # Calculate the size of the piece
+    shape = piece.get_shape()
+    piece_height = len(shape)
+    piece_width = len(shape[0]) if piece_height > 0 else 0
+
+    # Calculate offsets to center the piece in the preview box
+    offset_x = (preview_box_size - piece_width * BLOCK_SIZE) // 2
+    offset_y = (preview_box_size - piece_height * BLOCK_SIZE) // 2
+
+    # Draw the next piece
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell:
+                pygame.draw.rect(surface, piece.color, (preview_x + offset_x + j * BLOCK_SIZE, preview_y + offset_y + i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 0)
+
+
+def instant_drop(piece, grid):
+    """Move the piece down until it hits something"""
+    while valid_space(piece, grid):
+        piece.y += 1
+    piece.y -= 1  # Move back up one step since we went too far
+    return True  # Return True to indicate the piece has landed
+
+
 def show_game_over(screen: pygame.Surface):
     draw_text_middle(screen, "GAME OVER!", RED)
     pygame.display.update()
@@ -383,7 +375,6 @@ def show_game_over(screen: pygame.Surface):
 
 
 if __name__ == "__main__":
-    pygame.display.set_caption("Tetris")
+    pygame.init()
     main()
     pygame.quit()
-    sys.exit()
