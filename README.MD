@@ -11,6 +11,7 @@ Here, you'll find:
 - 🕹️ a simple **Pong** game
 - 🐍 a simple **Snake** game
 - 🎮 a simple **Tetris** game
+- 🐦 a simple **Flappy Bird** game
 - 🌱 a simple **Conway's Game of Life** simulation
 
 ## 🚀 Getting Started
