@@ -6,19 +6,17 @@ from enum import Enum, auto
 import pygame
 import neat
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import BLACK, WHITE, RED, FONT_100_CS, FONT_75_CS, FONT_50_CS, FONT_28_CS, FONT_14_CS
-
 try:
-    from constants import SCREEN_WIDTH, SCREEN_HEIGHT
-    from logic import Game
+    from constants import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, RED
+    from game_logic import Game
     from draw import draw_game, draw_net, draw_scores
     from ai import test_best_network
 except ImportError:
-    from .constants import SCREEN_WIDTH, SCREEN_HEIGHT
-    from .logic import Game
+    from .constants import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, RED
+    from .game_logic import Game
     from .draw import draw_game, draw_net, draw_scores
     from .ai import test_best_network
+
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -42,6 +40,11 @@ def display_menu(screen: pygame.Surface):
     waiting_for_selection = True
     selection = MenuSelection.SINGLE_PLAYER
 
+    font_100 = pygame.font.SysFont("comicsans", 100)
+    font_50 = pygame.font.SysFont("comicsans", 50)
+    font_28 = pygame.font.SysFont("comicsans", 28)
+    font_14 = pygame.font.SysFont("comicsans", 14)
+
     while waiting_for_selection:
 
         for event in pygame.event.get():
@@ -63,27 +66,27 @@ def display_menu(screen: pygame.Surface):
 
         screen.fill(BLACK)
 
-        txt = FONT_100_CS.render("PONG", True, WHITE)
+        txt = font_100.render("PONG", True, WHITE)
         txt_rect = txt.get_rect(center=(screen_width // 2, screen_height * 0.15))
         screen.blit(txt, txt_rect)
 
-        txt = FONT_50_CS.render("Single Player", True, WHITE)
+        txt = font_50.render("Single Player", True, WHITE)
         txt_rect1 = txt.get_rect(center=(screen_width // 2, screen_height * 0.4))
         screen.blit(txt, txt_rect1)
 
-        txt = FONT_50_CS.render("Multi Player", True, WHITE)
+        txt = font_50.render("Multi Player", True, WHITE)
         txt_rect2 = txt.get_rect(center=(screen_width // 2, screen_height * 0.55))
         screen.blit(txt, txt_rect2)
 
-        txt = FONT_14_CS.render("Player 1: W (up), S (down)", True, WHITE)
+        txt = font_14.render("Player 1: W (up), S (down)", True, WHITE)
         txt_rect = txt.get_rect(center=(screen_width // 2, screen_height * 0.7))
         screen.blit(txt, txt_rect)
 
-        txt = FONT_14_CS.render("Player 2: Up Arrow, Down Arrow", True, WHITE)
+        txt = font_14.render("Player 2: Up Arrow, Down Arrow", True, WHITE)
         txt_rect = txt.get_rect(center=(screen_width // 2, screen_height * 0.75))
         screen.blit(txt, txt_rect)
 
-        txt = FONT_28_CS.render("Press SPACE to start", True, RED)
+        txt = font_28.render("Press SPACE to start", True, RED)
         txt_rect = txt.get_rect(center=(screen_width // 2, screen_height * 0.9))
         screen.blit(txt, txt_rect)
 
@@ -145,7 +148,8 @@ def run_multi_player_game(screen: pygame.Surface):
         draw_game(screen, game, draw_offset_x, draw_offset_y)
 
         if game.game_over:
-            txt = FONT_75_CS.render("Game Over", True, RED)
+            font = pygame.font.SysFont("comicsans", 75)
+            txt = font.render("Game Over", True, RED)
             txt_rect = txt.get_rect(center=(screen_width // 2, screen_height // 2))
             screen.blit(txt, txt_rect)
             pygame.display.flip()
@@ -156,5 +160,6 @@ def run_multi_player_game(screen: pygame.Surface):
 
 
 if __name__ == "__main__":
+    pygame.init()
     main()
     pygame.quit()

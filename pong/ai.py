@@ -7,16 +7,13 @@ import neat
 import pygame
 
 try:
-    from logic import Game
+    from game_logic import Game
     from draw import draw_game, draw_net, draw_scores, draw_hits
-    from constants import SCREEN_WIDTH, SCREEN_HEIGHT, BEST_PICKLE, CHECKPOINT_DIR
+    from constants import SCREEN_WIDTH, SCREEN_HEIGHT, BEST_PICKLE, CHECKPOINT_DIR, BLACK
 except ImportError:
-    from .logic import Game
+    from .game_logic import Game
     from .draw import draw_game, draw_net, draw_scores, draw_hits
-    from .constants import SCREEN_WIDTH, SCREEN_HEIGHT, BEST_PICKLE, CHECKPOINT_DIR
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import BLACK
+    from .constants import SCREEN_WIDTH, SCREEN_HEIGHT, BEST_PICKLE, CHECKPOINT_DIR, BLACK
 
 
 DRAW = False

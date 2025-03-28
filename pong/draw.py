@@ -1,15 +1,11 @@
-import os
-import sys
 import pygame
 
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import WHITE, RED, FONT_50_CS, FONT_30_CS
-
 try:
-    from logic import Game
+    from game_logic import Game
+    from constants import WHITE, RED
 except ImportError:
-    from .logic import Game
+    from .game_logic import Game
+    from .constants import WHITE, RED
 
 
 def draw_game(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
@@ -32,16 +28,18 @@ def draw_net(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_of
 
 
 def draw_scores(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
-    left_score_txt = FONT_50_CS.render(str(game.score_left), True, WHITE)
-    right_score_txt = FONT_50_CS.render(str(game.score_right), True, WHITE)
+    font = pygame.font.SysFont("comicsans", 50)
+    left_score_txt = font.render(str(game.score_left), True, WHITE)
+    right_score_txt = font.render(str(game.score_right), True, WHITE)
     screen.blit(left_score_txt, (game.game_area.width // 4 - left_score_txt.get_width() // 2 - draw_offset_x, left_score_txt.get_height() // 2 - draw_offset_y))
     screen.blit(right_score_txt, (game.game_area.width * (3 / 4) - right_score_txt.get_width() // 2 - draw_offset_x, right_score_txt.get_height() // 2 - draw_offset_y))
 
 
 def draw_hits(screen: pygame.Surface, game: Game, draw_offset_x: int = 0, draw_offset_y: int = 0):
-    left_hits_txt = FONT_30_CS.render(str(game.hits_left), True, RED)
-    right_hits_txt = FONT_30_CS.render(str(game.hits_right), True, RED)
-    total_hits_txt = FONT_30_CS.render(str(game.total_hits), True, RED)
+    font = pygame.font.SysFont("comicsans", 30)
+    left_hits_txt = font.render(str(game.hits_left), True, RED)
+    right_hits_txt = font.render(str(game.hits_right), True, RED)
+    total_hits_txt = font.render(str(game.total_hits), True, RED)
 
     # Left hits at bottom middle left (1/4)
     screen.blit(left_hits_txt, (game.game_area.width // 4 - left_hits_txt.get_width() // 2 - draw_offset_x, game.game_area.height - left_hits_txt.get_height() - draw_offset_y))
