@@ -1,18 +1,12 @@
-# 🐍 Snake Game
-
-import os
 import sys
 import logging
 import pygame
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from globals import BLACK, GRAY, RED, GREEN, FONT_50, FONT_40
-
 try:
-    from .logic import Game, Grid
+    from .game_logic import Game, Grid
     from .ai import SnakeAI
 except ImportError:
-    from logic import Game, Grid
+    from game_logic import Game, Grid
     from ai import SnakeAI
 
 
@@ -24,11 +18,17 @@ GRID_CELL_SIZE = 20
 WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
 DRAW_GRID = False
 
+BLACK = (0, 0, 0)
+GREY = (50, 50, 50)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+
 
 def main():
+    pygame.display.set_caption(TITLE)
+
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     clock = pygame.time.Clock()
-
     game_grid = Grid(width=WINDOW_WIDTH // GRID_CELL_SIZE, height=WINDOW_HEIGHT // GRID_CELL_SIZE)
 
     draw_grid = None
@@ -56,10 +56,12 @@ def main():
 
 def show_welcome_screen(screen: pygame.Surface):
     screen.fill(BLACK)
+    font_50 = pygame.font.SysFont("arial", 50)
+    font_40 = pygame.font.SysFont("arial", 40)
 
-    title = FONT_50.render(TITLE, True, GREEN)
-    human_text = FONT_40.render("Press H for Human Player", True, GRAY)
-    ai_text = FONT_40.render("Press A for AI Player", True, GRAY)
+    title = font_50.render(TITLE, True, GREEN)
+    human_text = font_40.render("Press H for Human Player", True, GREY)
+    ai_text = font_40.render("Press A for AI Player", True, GREY)
 
     title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
     human_rect = human_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
@@ -73,7 +75,8 @@ def show_welcome_screen(screen: pygame.Surface):
 
 
 def show_game_over(screen: pygame.Surface, game: Game):
-    game_over_text = FONT_50.render(f"Game Over! Score: {game.score}", True, RED)
+    font = pygame.font.SysFont("arial", 50)
+    game_over_text = font.render(f"Game Over! Score: {game.score}", True, RED)
     text_rect = game_over_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
     screen.blit(game_over_text, text_rect)
     pygame.display.flip()
@@ -82,12 +85,11 @@ def show_game_over(screen: pygame.Surface, game: Game):
 
 def draw_game_state(screen: pygame.Surface, game: Game, draw_grid: list[pygame.Rect]):
 
-    # Clear the screen
     screen.fill(BLACK)
 
     if DRAW_GRID:
         for rect in draw_grid:
-            pygame.draw.rect(screen, GRAY, rect, width=1)
+            pygame.draw.rect(screen, GREY, rect, width=1)
 
     # Draw the snake
     for segment in game.snake.positions:
@@ -96,7 +98,6 @@ def draw_game_state(screen: pygame.Surface, game: Game, draw_grid: list[pygame.R
     # Draw the food
     pygame.draw.rect(screen, RED, (game.food.x * GRID_CELL_SIZE + 1, game.food.y * GRID_CELL_SIZE + 1, GRID_CELL_SIZE - 2, GRID_CELL_SIZE - 2))
 
-    # Update the display
     pygame.display.flip()
 
 
@@ -159,7 +160,6 @@ def run_ai_game(screen: pygame.Surface, clock: pygame.time.Clock, game_grid: Gri
 
 
 if __name__ == "__main__":
-    pygame.display.set_caption(TITLE)
+    pygame.init()
     main()
     pygame.quit()
-    sys.exit()

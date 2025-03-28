@@ -2,13 +2,13 @@ import random
 from collections import deque
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
+from torch import nn
+from torch import optim
 
 try:
-    from .logic import Grid, Game, Coord
+    from .game_logic import Grid, Game, Coord
 except ImportError:
-    from logic import Grid, Game, Coord
+    from game_logic import Grid, Game, Coord
 
 
 class SnakeNN(nn.Module):
